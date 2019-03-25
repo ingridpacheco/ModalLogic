@@ -4,7 +4,7 @@ import math
 OPS = {'^', '|', '~', '>'}
 
 #Valores das variaveis usadas na linguagem
-VALUE = {'A':True, 'B':False, 'C':False}
+VALUE = {'A':True, 'B':True, 'C':False}
 
 
 #TODO ------------------------- 
@@ -40,7 +40,7 @@ def Calculate(expressionStack):
 
 if __name__== "__main__":
 
-    exp = [">","~","A","B"]
+    exp = ["^",">","A","B","C"]
     print(str(exp))
     print(str(Calculate(exp)))
 

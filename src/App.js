@@ -15,6 +15,28 @@ import './App.css';
 import logo from './maxresdefault.jpg';
 import Calculate from './calculateLogic';
 
+export function parseExpression(exp){
+  let result = ''
+  for (let i = 0; i < exp.length; i++){
+    if (exp[i] === '('){
+      let newExp = exp.slice(i+1, exp.length)
+      let parenthesisExp = parseExpression(newExp)
+      i += parenthesisExp.length + 1
+      result = result.concat(parenthesisExp)
+    }
+    else {
+      if (exp[i] === ')'){
+        return result
+      }
+      if (['>','^','V'].includes(exp[i]))
+        result = exp[i].concat(result)
+      else
+        result = result.concat(exp[i])
+    }
+  }
+  return result
+}
+
 class App extends Component {
   constructor(){
     super()
@@ -59,23 +81,23 @@ class App extends Component {
 
   getResult = () => {
     const {varValues} = this.state
-    let logic = this.state.logic.replace(/ /g,'')
+    let logic = this.state.logic.replace(/ /g,'').toUpperCase()
     let quantity = 0
-    let variables = []
-    let newLogic = []
+    let result = []
+
+    logic = parseExpression(logic)
+
     for (let i = 0; i < logic.length; i++){
-      if (!['v','^','>','~'].includes(logic[i])){
+      if (!['V','^','>','~'].includes(logic[i])){
         quantity++;
-        variables.push(logic[i])
       }
-      else{
-        newLogic.push(logic[i])
-      }
+      result.push(logic[i])
     }
-    newLogic = newLogic.reverse().concat(variables)
+    console.log(result)
+
     this.setState({
       quantity,
-      result: Calculate(newLogic, varValues),
+      result: Calculate(result, varValues),
     });
   }
 
@@ -83,7 +105,7 @@ class App extends Component {
     let variables = this.state.variables.slice(0,this.state.quantity)
     return (
       <div className="App">
-        <img src={logo}/>
+        <img src={logo} height={200}/>
         <h3>Trabalho de Lógica em Programação</h3>
         <div style={{display: 'inline-grid'}}>
           <FormControl required variant="outlined" style={{width: 100, marginTop: 30, marginBottom: 15}}>
