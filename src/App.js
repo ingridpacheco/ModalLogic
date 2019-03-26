@@ -58,7 +58,7 @@ class App extends Component {
         I: false,
         J: false
       },
-      variables: ['A','B','C','D','E','F','G','H','I','J']
+      variables: []
     }
   }
 
@@ -97,16 +97,16 @@ class App extends Component {
       }
       result.push(logic[i])
     }
-    console.log(result)
 
     this.setState({
       quantity,
       result: Calculate(result, varValues),
+      variables
     });
   }
 
   render() {
-    let variables = this.state.variables.slice(0,this.state.quantity)
+    const {variables} = this.state
     return (
       <div className="App" style={{backgroundColor: '#efeeee'}}>
         <div className="crop">
@@ -116,6 +116,7 @@ class App extends Component {
         <h2>Trabalho de Lógica em Programação</h2>
         <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
+            {variables.length > 0 && (
             <ExpansionPanel defaultExpanded>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>Valor das Variáveis</Typography>
@@ -150,6 +151,7 @@ class App extends Component {
                 ))}
               </ExpansionPanelDetails>
             </ExpansionPanel>
+            )}
             <TextField
                 id="logic"
                 label="Lógica"
