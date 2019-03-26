@@ -114,7 +114,7 @@ class App extends Component {
         </div>
         <Divider variant="middle" />
         <h2>Trabalho de Lógica em Programação</h2>
-        <Paper elevation={2} style={{width: 400, marginLeft: '40%', paddingTop: 20, paddingBottom: 20}}>
+        <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
             <ExpansionPanel defaultExpanded>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
