@@ -84,11 +84,13 @@ class App extends Component {
     let logic = this.state.logic.replace(/ /g,'').toUpperCase()
     let quantity = 0
     let result = []
+    let variables = []
 
     logic = parseExpression(logic)
 
     for (let i = 0; i < logic.length; i++){
-      if (!['V','^','>','~'].includes(logic[i])){
+      if (!['V','^','>','~'].includes(logic[i]) && !variables.includes(logic[i])){
+        variables.push(logic[i])
         quantity++;
       }
       result.push(logic[i])
@@ -108,39 +110,6 @@ class App extends Component {
         <img src={logo} height={200}/>
         <h3>Trabalho de Lógica em Programação</h3>
         <div style={{display: 'inline-grid'}}>
-          <FormControl required variant="outlined" style={{width: 100, marginTop: 30, marginBottom: 15}}>
-            <InputLabel
-              ref={ref => {
-                this.InputLabelRef = ref;
-              }}
-              htmlFor="outlined-age-simple"
-              style={{bottom: 45, top: 'auto'}}
-            >
-              Quantidade de variáveis
-            </InputLabel>
-            <Select
-              value={this.state.quantity}
-              onChange={this.changeQuantity}
-              input={
-                <OutlinedInput
-                  labelWidth={0}
-                  name="age"
-                  id="outlined-age-simple"
-                />
-              }
-            >
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={7}>7</MenuItem>
-              <MenuItem value={8}>8</MenuItem>
-              <MenuItem value={9}>9</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-            </Select>
-          </FormControl>
           <ExpansionPanel defaultExpanded>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>Valor das Variáveis</Typography>
