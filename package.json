@@ -1,23 +1,24 @@
 {
-  "name": "my-app",
+  "name": "logica-em-programacao",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ingridpacheco.github.io/trabalho-resolver-logica",
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "bootstrap": "3",
     "chai": "^4.2.0",
+    "gh-pages": "^2.0.1",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts": "2.1.8"
   },
-  "homepage": "http://ingridpacheco.github.io/trabalho-resolver-logica",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "yarn build",
+    "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
@@ -32,7 +33,6 @@
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
-    "gh-pages": "^2.0.1",
     "jest": "23.6.0"
   }
 }
