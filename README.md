@@ -1,7 +1,7 @@
 # Trabalho de Lógica em Programação
 Primeiro trabalho da disciplina. Interpreta e resolve as equações lógicas.
 
-## Alunos:
+## Alunos
 - Diego Jesus
 - Ingrid Pacheco
 
