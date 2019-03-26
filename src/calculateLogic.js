@@ -8,7 +8,6 @@ const IsOperator = (symbol) => {
 
 //Recebe a expressao como uma pilha com os operadores e valores. Ex. exp = [">","~","A","B"] => ~A>B(Notacao normal) = >~AB(Notacao polonesa)
 const Calculate = (expressionStack, variableValues) => {
-    console.log(expressionStack)
     let item = expressionStack.shift()
     let resultVar1
     let resultVar2
