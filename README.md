@@ -1,5 +1,9 @@
-# trabalho-resolver-logica
+# Trabalho de Lógica em Programação
 Primeiro trabalho da disciplina. Interpreta e resolve as equações lógicas.
+
+## Alunos:
+- Diego Jesus
+- Ingrid Pacheco
 
 ## Símbolos
 
