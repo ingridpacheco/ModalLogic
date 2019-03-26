@@ -19,6 +19,11 @@
   color: white;
 }
 
+.crop {
+  height: 200px;
+  overflow: hidden;
+}
+
 .App-link {
   color: #61dafb;
 }
