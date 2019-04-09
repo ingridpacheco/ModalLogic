@@ -189,6 +189,7 @@ class App extends Component {
         <h2>Trabalho de Lógica em Programação</h2>
         <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
+          <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Grafo</FormLabel>
               <img src={grafo} alt="grafo" style={{width: 380}}/>
               <FormControl component="fieldset">
                 <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Nó Raiz</FormLabel>
@@ -239,6 +240,12 @@ class App extends Component {
               variant="outlined"
               style={{marginRight: 50, marginLeft: 10}}
             />
+            <p>{`Use v para 'ou',
+            ^ para 'e',
+            ➡ para 'implica',
+            ~ para 'negação',
+            [] para 'para todo' e
+            <> para 'existe'`}</p>
             <Button variant="contained" color="default" style={{marginTop: 25, maxWidth: 380}} onClick={this.getResult}>
               VERIFICAR RESULTADO
             </Button>
