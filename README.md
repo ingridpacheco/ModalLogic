@@ -9,10 +9,12 @@ Primeiro trabalho da disciplina. Interpreta e resolve as equações lógicas.
 
 Os símbolos disponíveis para as equações lógicas são:
 
-- > ' > ' para implica
-- > ' v ' para ou
-- > ' ^ ' para e
-- > ' ~ ' para negação
+- > ' ➡ ' para 'implica'
+- > ' v ' para 'ou'
+- > ' ^ ' para 'e'
+- > ' ~ ' para 'negação'
+- > ' [] ' para 'para todo'
+- > ' <> ' para 'existe'
 
 As equações podem ser postas de forma direta, pois o programa faz a conversão para notação polonesa e a executa.
 

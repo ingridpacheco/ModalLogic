@@ -2,20 +2,47 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
 import logo from './bg-index.jpg';
 import Calculate from './calculateLogic';
 import Divider from '@material-ui/core/Divider';
 import './App.css';
+
+class Graph {
+  constructor(){
+      this.AdjList = new Map(); 
+      this.LetterList = new Map();
+      this.rootNode = '';
+  }
+
+  setRootNode(v){
+    this.rootNode = v;
+  }
+
+  getRootNode(){
+    return this.rootNode
+  }
+
+  addVertex(v){ 
+      this.AdjList.set(v, []); 
+      this.LetterList.set(v, []);
+  }
+
+  addEdge(v, w){ 
+      this.AdjList.get(v).push(w);
+  }
+
+  addLetter(v, letter){
+    this.LetterList.get(v).push(letter)
+  }
+
+  getAdjacents(v){
+    return this.AdjList.get(v)
+  }
+
+  letterinList(v,letter){
+    return this.LetterList.get(v).includes(letter)
+  }
+}
 
 export function parseExpression(exp){
   let result = ''
@@ -30,10 +57,11 @@ export function parseExpression(exp){
       if (exp[i] === ')'){
         return result
       }
-      if (['>','^','V'].includes(exp[i]))
+      if (['➡','^','V'].includes(exp[i]))
         result = exp[i].concat(result)
-      else
+      else{
         result = result.concat(exp[i])
+      }
     }
   }
   return result
@@ -58,7 +86,7 @@ class App extends Component {
         I: false,
         J: false
       },
-      variables: []
+      variables: [],
     }
   }
 
@@ -82,7 +110,6 @@ class App extends Component {
   }
 
   getResult = () => {
-    const {varValues} = this.state
     let logic = this.state.logic.replace(/ /g,'').toUpperCase()
     let quantity = 0
     let result = []
@@ -91,22 +118,41 @@ class App extends Component {
     logic = parseExpression(logic)
 
     for (let i = 0; i < logic.length; i++){
-      if (!['V','^','>','~'].includes(logic[i]) && !variables.includes(logic[i])){
+      if (!['V','^','➡','~','<','>','[',']'].includes(logic[i]) && !variables.includes(logic[i])){
         variables.push(logic[i])
         quantity++;
       }
       result.push(logic[i])
     }
 
+    var graph = new Graph(4); 
+    var vertices = [ 's1', 's2', 's3', 's4']; 
+      
+    // adding vertices 
+    for (var i = 0; i < vertices.length; i++) { 
+        graph.addVertex(vertices[i]); 
+    }
+
+    graph.setRootNode('s1')
+      
+    // adding edges 
+    graph.addEdge('s1', 's2'); 
+    graph.addEdge('s1', 's3'); 
+    graph.addEdge('s2', 's4');
+    graph.addLetter('s1', 'A'); 
+    graph.addLetter('s2', 'B'); 
+    graph.addLetter('s3', 'A');
+    graph.addLetter('s3', 'B');
+    graph.addLetter('s4', 'A');
+
     this.setState({
       quantity,
-      result: Calculate(result, varValues),
+      result: Calculate(result, graph),
       variables
     });
   }
 
   render() {
-    const {variables} = this.state
     return (
       <div className="App" style={{backgroundColor: '#efeeee'}}>
         <div className="crop">
@@ -116,49 +162,13 @@ class App extends Component {
         <h2>Trabalho de Lógica em Programação</h2>
         <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
-            {variables.length > 0 && (
-            <ExpansionPanel defaultExpanded>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Valor das Variáveis</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                {variables.map(item => (
-                  <FormControl required variant="outlined" style={{width: 100}} key={item}>
-                    <InputLabel
-                      ref={ref => {
-                        this.InputLabelRef = ref;
-                      }}
-                      htmlFor="outlined-age-simple"
-                      style={{bottom: 50, top: 'auto'}}
-                    >
-                      Valor de {item}
-                    </InputLabel>
-                    <Select
-                      value={this.state.varValues[item]}
-                      onChange={this.changeVariable(item)}
-                      input={
-                        <OutlinedInput
-                          labelWidth={0}
-                          name="age"
-                          id="outlined-age-simple"
-                        />
-                      }
-                    >
-                      <MenuItem value={true}>True</MenuItem>
-                      <MenuItem value={false}>False</MenuItem>
-                    </Select>
-                  </FormControl>
-                ))}
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-            )}
             <TextField
-                id="logic"
-                label="Lógica"
-                onChange={this.handleChange}
-                margin="normal"
-                variant="outlined"
-                style={{marginRight: 50}}
+              id="logic"
+              label="Lógica"
+              onChange={this.handleChange}
+              margin="normal"
+              variant="outlined"
+              style={{marginRight: 50}}
             />
             <Button variant="contained" color="default" style={{marginTop: 25}} onClick={this.getResult}>
               Enviar
