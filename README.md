@@ -20,7 +20,7 @@ The equations can be put in the direct way, because the program makes the conver
 
 `Ex: (A v B) ^ C`
 
-## Scripts disponíveis
+## Scripts
 
 In the project directory, you can run:
 
