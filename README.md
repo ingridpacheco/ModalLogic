@@ -20,6 +20,9 @@ The equations can be put in the direct way, because the program makes the conver
 
 `Ex: (A v B) ^ C`
 
+## Site
+https://ingridpacheco.github.io/trabalho-resolver-logica/
+
 ## Scripts
 
 In the project directory, you can run:
