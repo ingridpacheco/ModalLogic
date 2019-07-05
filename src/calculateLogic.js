@@ -3,8 +3,8 @@
 // V -> ou
 // ➡ -> implica
 // ~ -> not
-// [] -> para todo
-// <> -> algum
+// []a -> para todo vizinho que tem o agente 'a' (na aresta de ligação)
+// <>a -> algum vizinho que tem o agente 'a' (na aresta de ligação)
 const OPS = ['^', 'V', '~', '➡', '[','<']
 
 //Define se um valor e ou nao um operador
@@ -30,10 +30,14 @@ const Calculate = (expressionStack, graph) => {
                     expression1.push(expressionStack[j])
                 }
                 const rootNode1 = graph.getRootNode()
-                const adjacents1 = graph.getAdjacents(rootNode1)
-
-                if (adjacents1.length === 0)
+                const adjacents1 = graph.getAdjacents(rootNode1,expression1[0])
+                expressionStack.shift()
+                expression1.shift()
+                if (adjacents1.length === 0){
+                    Calculate(expressionStack, graph)
+                    //sumidouro para todo é true
                     return false
+                }
                 for (let i = 0; i < adjacents1.length; i++){
                     graph.setRootNode(adjacents1[i])
                     if (!Calculate(expressionStack, graph)){
@@ -52,10 +56,13 @@ const Calculate = (expressionStack, graph) => {
                     expression2.push(expressionStack[j])
                 }
                 const rootNode2 = graph.getRootNode()
-                const adjacents2 = graph.getAdjacents(rootNode2)
-
-                if (adjacents2.length === 0)
+                const adjacents2 = graph.getAdjacents(rootNode2,expression2[0])
+                expressionStack.shift()
+                expression2.shift()
+                if (adjacents2.length === 0){
+                    Calculate(expressionStack, graph)
                     return false
+                }
                 for (let i = 0; i < adjacents2.length; i++){
                     graph.setRootNode(adjacents2[i])
                     if (Calculate(expressionStack, graph)){
