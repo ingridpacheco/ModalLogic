@@ -143,11 +143,11 @@ class App extends Component {
     graph.addVertex('s3')
     graph.addVertex('s4')
     graph.addVertex('s5')
-    graph.addEdge('s1', 's2','A'); 
-    graph.addEdge('s1', 's3','A'); 
-    graph.addEdge('s2', 's4','B');
-    graph.addEdge('s3', 's5','C');
-    graph.addEdge('s4', 's5','A');
+    graph.addEdge('s1', 's2','X'); 
+    graph.addEdge('s1', 's3','Z'); 
+    graph.addEdge('s2', 's4','Y');
+    graph.addEdge('s3', 's5','Z');
+    graph.addEdge('s4', 's5','X');
     graph.setRootNode('s1')
     this.setState({graph})
   }
@@ -168,7 +168,7 @@ class App extends Component {
     logic = parseExpression(logic)
 
     for (let i = 0; i < logic.length; i++){
-      if (!['V','^','➡','~','<','>','[',']','A','B','C'].includes(logic[i]) && !variables.includes(logic[i])){
+      if (!['V','^','➡','~','<','>','[',']','X','Y','Z','K','B'].includes(logic[i]) && !variables.includes(logic[i])){
         variables.push(logic[i])
       }
       result.push(logic[i])
@@ -253,7 +253,7 @@ class App extends Component {
                   </FormGroup>
                 </Paper>
             ))}
-            <p style={{textAlign: "left", fontWeight: "bold"}}>{'Não utilize as letras a, b e c na lógica como símbolos proposicionais'}</p>
+            <p style={{textAlign: "left", fontWeight: "bold"}}>{'Não utilize as letras x, y, z, k e b na lógica como símbolos proposicionais'}</p>
             <TextField
               id="logic"
               label="Lógica"
