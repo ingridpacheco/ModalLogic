@@ -5,7 +5,8 @@
 // ~ -> not
 // []a -> para todo vizinho que tem o agente 'a' (na aresta de ligação)
 // <>a -> algum vizinho que tem o agente 'a' (na aresta de ligação)
-const OPS = ['^', 'V', '~', '➡', '[','<']
+// const OPS = ['^', 'V', '~', '➡', '[','<']
+const OPS = ['^', 'V', '~', '➡', 'K','B']
 
 //Define se um valor e ou nao um operador
 const IsOperator = (symbol) => {
@@ -23,8 +24,7 @@ const Calculate = (expressionStack, graph) => {
     }
     else{
         switch(item){
-            case "[":
-                expressionStack.shift()
+            case "K":
                 let expression1 = []
                 for (let j = 0; j < expressionStack.length; j++){
                     expression1.push(expressionStack[j])
@@ -49,8 +49,7 @@ const Calculate = (expressionStack, graph) => {
                 }
                 graph.setRootNode(rootNode1)
                 return true
-            case "<":
-                expressionStack.shift()
+            case "B":
                 let expression2 = []
                 for (let j = 0; j < expressionStack.length; j++){
                     expression2.push(expressionStack[j])
