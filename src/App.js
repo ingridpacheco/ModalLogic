@@ -211,7 +211,9 @@ class App extends Component {
         <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
           <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Grafo</FormLabel>
-              <img src={grafo} alt="grafo" style={{width: 380}}/>
+          <img src={grafo} alt="grafo" style={{width: 380}}/>
+          <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Agentes</FormLabel>
+          <p style={{textAlign: "left", fontWeight: "bold"}}>{'X, Y e Z'}</p>
               <FormControl component="fieldset">
                 <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Nó Raiz</FormLabel>
                 <RadioGroup
