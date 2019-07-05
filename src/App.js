@@ -19,7 +19,8 @@ import './App.css';
 
 class Graph {
   constructor(){
-      this.AdjList = new Map(); 
+      this.AdjList = new Map();
+      this.EdgeLabel = new Map();
       this.LetterList = new Map();
       this.rootNode = '';
   }
@@ -33,12 +34,18 @@ class Graph {
   }
 
   addVertex(v){ 
-      this.AdjList.set(v, []); 
-      this.LetterList.set(v, []);
+    this.AdjList.set(v, []); 
+    this.LetterList.set(v, []);
   }
 
-  addEdge(v, w){ 
-      this.AdjList.get(v).push(w);
+  addEdge(v, w, agent){ 
+    this.AdjList.get(v).push(w);
+    this.addAgent(v,w,agent)
+  }
+
+  addAgent(v,w,agent){
+    let edge = v.concat(w)
+    this.EdgeLabel.set(edge,agent)
   }
 
   addLetter(v, letter){
@@ -50,8 +57,22 @@ class Graph {
     this.LetterList.get(v).splice(index,1)
   }
 
-  getAdjacents(v){
-    return this.AdjList.get(v)
+  getAgent(v,w,letter){
+    let edge = v.concat(w)
+    if (this.EdgeLabel.get(edge) !== letter){
+      return false
+    }
+    return true
+  }
+
+  getAdjacents(v, letter){
+    let adj = this.AdjList.get(v)
+    let correctAdj = []
+    for (let i = 0; i < adj.length; i++){
+      if (this.getAgent(v,adj[i],letter))
+        correctAdj.push(adj[i])
+    }
+    return correctAdj
   }
 
   letterinList(v,letter){
@@ -122,11 +143,11 @@ class App extends Component {
     graph.addVertex('s3')
     graph.addVertex('s4')
     graph.addVertex('s5')
-    graph.addEdge('s1', 's2'); 
-    graph.addEdge('s1', 's3'); 
-    graph.addEdge('s2', 's4');
-    graph.addEdge('s3', 's5');
-    graph.addEdge('s4', 's5');
+    graph.addEdge('s1', 's2','A'); 
+    graph.addEdge('s1', 's3','A'); 
+    graph.addEdge('s2', 's4','B');
+    graph.addEdge('s3', 's5','C');
+    graph.addEdge('s4', 's5','A');
     graph.setRootNode('s1')
     this.setState({graph})
   }
@@ -147,7 +168,7 @@ class App extends Component {
     logic = parseExpression(logic)
 
     for (let i = 0; i < logic.length; i++){
-      if (!['V','^','➡','~','<','>','[',']'].includes(logic[i]) && !variables.includes(logic[i])){
+      if (!['V','^','➡','~','<','>','[',']','A','B','C'].includes(logic[i]) && !variables.includes(logic[i])){
         variables.push(logic[i])
       }
       result.push(logic[i])
@@ -232,6 +253,7 @@ class App extends Component {
                   </FormGroup>
                 </Paper>
             ))}
+            <p style={{textAlign: "left", fontWeight: "bold"}}>{'Não utilize as letras a, b e c na lógica como símbolos proposicionais'}</p>
             <TextField
               id="logic"
               label="Lógica"
@@ -240,12 +262,12 @@ class App extends Component {
               variant="outlined"
               style={{marginRight: 50, marginLeft: 10}}
             />
-            <p>{`Use v para 'ou',
+            {/* <p>{`Use v para 'ou',
             ^ para 'e',
             ➡ para 'implica',
-            ~ para 'negação',
-            [] para 'para todo' e
-            <> para 'existe'`}</p>
+            ~ para 'negação',`}</p>
+            <p>{`[]a para 'para todo vizinho que contém o agente 'a' na aresta de ligação' e
+            <>a para 'existe um vizinho entre os que contém o agente 'a' na aresta de ligação'`}</p> */}
             <Button variant="contained" color="default" style={{marginTop: 25, maxWidth: 380}} onClick={this.getResult}>
               VERIFICAR RESULTADO
             </Button>
