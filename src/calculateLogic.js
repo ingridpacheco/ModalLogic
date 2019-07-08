@@ -1,12 +1,15 @@
+import { changeGraph } from './changeGraph'
+
 //Operadoes usados na operacao
 // ^ -> e
 // V -> ou
 // ➡ -> implica
 // ~ -> not
-// []a -> para todo vizinho que tem o agente 'a' (na aresta de ligação)
-// <>a -> algum vizinho que tem o agente 'a' (na aresta de ligação)
-// const OPS = ['^', 'V', '~', '➡', '[','<']
-const OPS = ['^', 'V', '~', '➡', 'K','B']
+// Ka -> para todo vizinho que tem o agente 'a' (na aresta de ligação)
+// Ba -> algum vizinho que tem o agente 'a' (na aresta de ligação)
+// [] -> anúncio público
+// const OPS = ['^', 'V', '~', '➡', '[','K','B']
+const OPS = ['^', 'V', '!', '➡', 'K','B','[']
 
 //Define se um valor e ou nao um operador
 const IsOperator = (symbol) => {
@@ -20,25 +23,61 @@ const Calculate = (expressionStack, graph) => {
     let resultVar2
     if (!IsOperator(item)){
         const rootNode = graph.getRootNode()
-        return graph.letterinList(rootNode, item)
+        let agent = expressionStack.shift()
+        let symbolAgent = item.concat(agent)
+        return graph.symbolInState(rootNode, symbolAgent)
     }
     else{
         switch(item){
+            case "[":
+                let publicAnnouncement = []
+                let quantity = expressionStack.length
+                for (let i = 0; i < quantity; i++){
+                    let letter = expressionStack.shift()
+                    if (letter === "]"){
+                        break;
+                    }
+                    publicAnnouncement.push(letter)
+                }
+                let states = changeGraph(graph, publicAnnouncement)
+                if (states.length !== 0){
+                    let allStates = graph.getStates()
+                    let keys = allStates.keys()
+                    let difference = []
+                    for (let j = 0; j < allStates.size; j++){
+                        let value = keys.next().value
+                        if (states.indexOf(value) === -1){
+                            difference.push(value)
+                        }
+                    }
+                    if (difference.includes(graph.getRootNode())){
+                        alert("ISSO NÃO É VERDADE");
+                    }
+                    else{
+                        graph.removeStates(difference)
+                    }
+                }
+                if (expressionStack.length === 0){
+                    return new Error("Não tem o que validar")
+                }
+                return Calculate(expressionStack, graph)
             case "K":
                 let expression1 = []
                 for (let j = 0; j < expressionStack.length; j++){
                     expression1.push(expressionStack[j])
                 }
                 const rootNode1 = graph.getRootNode()
-                const adjacents1 = graph.getAdjacents(rootNode1,expression1[0])
+                let symbol1 = expression1.shift()
+                const adjacents1 = graph.getAdjacents(rootNode1,symbol1)
                 expressionStack.shift()
-                expression1.shift()
                 if (adjacents1.length === 0){
-                    Calculate(expressionStack, graph)
-                    //sumidouro para todo é true
-                    return false
+                    return Calculate(expressionStack, graph)
                 }
                 for (let i = 0; i < adjacents1.length; i++){
+                    if (!Calculate(expressionStack, graph)){
+                        return false
+                    }
+                    expressionStack = expression1
                     graph.setRootNode(adjacents1[i])
                     if (!Calculate(expressionStack, graph)){
                         graph.setRootNode(rootNode1)
@@ -55,14 +94,17 @@ const Calculate = (expressionStack, graph) => {
                     expression2.push(expressionStack[j])
                 }
                 const rootNode2 = graph.getRootNode()
-                const adjacents2 = graph.getAdjacents(rootNode2,expression2[0])
+                let symbol2 = expression2.shift()
+                const adjacents2 = graph.getAdjacents(rootNode2,symbol2)
                 expressionStack.shift()
-                expression2.shift()
                 if (adjacents2.length === 0){
-                    Calculate(expressionStack, graph)
-                    return false
+                    return Calculate(expressionStack, graph)
                 }
                 for (let i = 0; i < adjacents2.length; i++){
+                    if (Calculate(expressionStack, graph)){
+                        return true
+                    }
+                    expressionStack = expression2
                     graph.setRootNode(adjacents2[i])
                     if (Calculate(expressionStack, graph)){
                         graph.setRootNode(rootNode2)
@@ -81,14 +123,13 @@ const Calculate = (expressionStack, graph) => {
                 resultVar1 = Calculate(expressionStack, graph) 
                 resultVar2 = Calculate(expressionStack, graph)
                 return resultVar1 || resultVar2
-            case "~":
+            case "!":
                 return !Calculate(expressionStack, graph)
             case "➡":
                 resultVar1 = !Calculate(expressionStack, graph)
                 resultVar2 = Calculate(expressionStack, graph)
                 return resultVar1 || resultVar2
             default:
-                console.log('Símbolo não reconhecido')
         }
     }
 }
