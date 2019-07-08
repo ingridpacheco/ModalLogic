@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './bg-index.jpg';
-import grafo from './graph.png';
+import logo from './pictures/bg-index.jpg';
+import grafo from './pictures/graph.png';
 import Calculate from './calculateLogic';
 import { 
   Divider,
@@ -12,115 +12,72 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  FormGroup,
-  Checkbox
 } from '@material-ui/core';
+import Graph from './graph'
 import './App.css';
 
-class Graph {
-  constructor(){
-      this.AdjList = new Map();
-      this.EdgeLabel = new Map();
-      this.LetterList = new Map();
-      this.rootNode = '';
-  }
-
-  setRootNode(v){
-    this.rootNode = v;
-  }
-
-  getRootNode(){
-    return this.rootNode
-  }
-
-  addVertex(v){ 
-    this.AdjList.set(v, []); 
-    this.LetterList.set(v, []);
-  }
-
-  addEdge(v, w, agent){ 
-    this.AdjList.get(v).push(w);
-    this.addAgent(v,w,agent)
-  }
-
-  addAgent(v,w,agent){
-    let edge = v.concat(w)
-    this.EdgeLabel.set(edge,agent)
-  }
-
-  addLetter(v, letter){
-    this.LetterList.get(v).push(letter)
-  }
-
-  removeLetter(v, letter){
-    let index = this.LetterList.get(v).indexOf(letter)
-    this.LetterList.get(v).splice(index,1)
-  }
-
-  getAgent(v,w,letter){
-    let edge = v.concat(w)
-    if (this.EdgeLabel.get(edge) !== letter){
-      return false
-    }
-    return true
-  }
-
-  getAdjacents(v, letter){
-    let adj = this.AdjList.get(v)
-    let correctAdj = []
-    for (let i = 0; i < adj.length; i++){
-      if (this.getAgent(v,adj[i],letter))
-        correctAdj.push(adj[i])
-    }
-    return correctAdj
-  }
-
-  letterinList(v,letter){
-    return this.LetterList.get(v).includes(letter)
-  }
-
-  printGraph(){ 
-      var get_keys = this.AdjList.keys(); 
-    
-      for (var i of get_keys)  
-      { 
-          var get_values = this.AdjList.get(i);
-          var get_letters = this.LetterList.get(i);
-          var conc = "";
-          var letters = "";
-    
-          for (var j of get_values)
-            conc += j + " ";
-            
-          for (var k of get_letters)
-            letters += k + " ";
-    
-          console.log(i + " -> " + conc + " -> " + letters); 
-      } 
-  } 
-}
-
+let Logicresult = ''
 export function parseExpression(exp){
-  let result = ''
-  for (let i = 0; i < exp.length; i++){
-    if (exp[i] === '('){
-      let newExp = exp.slice(i+1, exp.length)
-      let parenthesisExp = parseExpression(newExp)
-      i += parenthesisExp.length + 1
-      result = result.concat(parenthesisExp)
+  let item = exp.shift()
+  if (item !== undefined){
+    if (item === '('){
+      let oldResult = Logicresult
+      Logicresult = ''
+      parseExpression(exp)
+      let newOrder = Logicresult
+      Logicresult = oldResult
+      Logicresult = Logicresult.concat(newOrder)
+      parseExpression(exp)
+    }
+    if (item === '['){
+      Logicresult = Logicresult.concat(item)
+      let oldResult = Logicresult
+      Logicresult = ''
+      parseExpression(exp)
+      let newOrder = Logicresult
+      Logicresult = oldResult
+      Logicresult = Logicresult.concat(newOrder)
+      parseExpression(exp)
     }
     else {
-      if (exp[i] === ')'){
-        return result
+      if (item === ']'){
+        Logicresult = Logicresult.concat(item)
       }
-      if (['➡','^','V'].includes(exp[i]))
-        result = exp[i].concat(result)
       else{
-        result = result.concat(exp[i])
+        if (item !== ')' && item !== '('){
+          if (['➡','^','V'].includes(item)){
+            Logicresult = item.concat(Logicresult)
+            parseExpression(exp)
+          }
+          else{
+            Logicresult = Logicresult.concat(item)
+            parseExpression(exp)
+          }
+        }
       }
     }
   }
-  return result
+  else{
+    return Logicresult
+  }
+}
+
+function createGraph(graph, vertices, rootNode){
+  for (let i = 0; i < vertices.length; i++){
+    graph.addVertex(vertices[i])
+  }
+
+  graph.addEdge('012', '021','X'); 
+  graph.addEdge('012', '102','Z'); 
+  graph.addEdge('012', '210','Y');
+  graph.addEdge('021', '201','Z');
+  graph.addEdge('021', '120','Y');
+  graph.addEdge('102', '120','X');
+  graph.addEdge('102', '201','Y');
+  graph.addEdge('120', '210','Z');
+  graph.addEdge('201', '210','X');
+  graph.setRootNode(rootNode)
+  return graph
 }
 
 class App extends Component {
@@ -130,26 +87,15 @@ class App extends Component {
       logic: "",
       result: "",
       variables: [],
-      rootNode: 's1',
-      vertices: ['s1','s2','s3','s4','s5'],
+      rootNode: '012',
+      vertices: ['012','021','102','120','201','210'],
       graph: new Graph()
     }
   }
 
   componentDidMount(){
-    let {graph} = this.state
-    graph.addVertex('s1')
-    graph.addVertex('s2')
-    graph.addVertex('s3')
-    graph.addVertex('s4')
-    graph.addVertex('s5')
-    graph.addEdge('s1', 's2','X'); 
-    graph.addEdge('s1', 's3','Z'); 
-    graph.addEdge('s2', 's4','Y');
-    graph.addEdge('s3', 's5','Z');
-    graph.addEdge('s4', 's5','X');
-    graph.setRootNode('s1')
-    this.setState({graph})
+    let {graph, vertices, rootNode} = this.state
+    this.setState(createGraph(graph, vertices, rootNode))
   }
 
   handleChange = event => {
@@ -162,13 +108,21 @@ class App extends Component {
   getResult = () => {
     let logic = this.state.logic.replace(/ /g,'').toUpperCase()
     let {graph} = this.state
+    let operations = ['V','^','➡','!','<','>','[',']','K','B']
+    let agents = ['X','Y','Z']
     let result = []
     let variables = []
 
-    logic = parseExpression(logic)
+    let arrayLogic = []
+    for (let i = 0; i < logic.length; i++)
+      arrayLogic.push(logic[i])
+
+    parseExpression(arrayLogic)
+    logic = Logicresult
+    Logicresult = ''
 
     for (let i = 0; i < logic.length; i++){
-      if (!['V','^','➡','~','<','>','[',']','X','Y','Z','K','B'].includes(logic[i]) && !variables.includes(logic[i])){
+      if (!operations.includes(logic[i]) && !agents.includes(logic[i]) && !variables.includes(logic[i])){
         variables.push(logic[i])
       }
       result.push(logic[i])
@@ -199,8 +153,21 @@ class App extends Component {
     })
   }
 
+  clearGraph = (graph) => {
+    graph.clearGraph()
+  }
+
+  clear = () => {
+    let { graph } = this.state 
+    let vertices = ['012','021','102','120','201','210']
+    let rootNode = '012'
+    this.clearGraph(graph)
+    this.setState({logic: "", result:""})
+    this.setState(createGraph(graph, vertices, rootNode))
+  }
+
   render() {
-    let {vertices, variables, graph} = this.state
+    let {vertices} = this.state
     return (
       <div className="App" style={{backgroundColor: '#efeeee'}}>
         <div className="crop">
@@ -210,12 +177,12 @@ class App extends Component {
         <h2>Trabalho de Lógica em Programação</h2>
         <Paper elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
           <div style={{display: 'inline-grid'}}>
-          <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Grafo</FormLabel>
-          <img src={grafo} alt="grafo" style={{width: 380}}/>
+          <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Grafo Inicial</FormLabel>
+          <img src={grafo} alt="grafo" style={{width: 200}}/>
           <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Agentes</FormLabel>
           <p style={{textAlign: "left", fontWeight: "bold"}}>{'X, Y e Z'}</p>
               <FormControl component="fieldset">
-                <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Nó Raiz</FormLabel>
+                <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Estado Correto</FormLabel>
                 <RadioGroup
                   aria-label="rootNode"
                   name="rootNode"
@@ -235,44 +202,25 @@ class App extends Component {
                   ))}
                 </RadioGroup>
               </FormControl>
-              {variables.map(item => (
-                <Paper key={item} elevation={2} style={{paddingTop: 20, paddingBottom: 20}}>
-                  <FormLabel component="legend" style={{textAlign: 'left', fontSize: 14, paddingLeft: 15}}>Vértices que tem {item}:</FormLabel>
-                  <FormGroup row style={{paddingLeft: 15}}>
-                    {vertices.map(vertice => (
-                      <FormControlLabel
-                        key={vertice}
-                        control={
-                          <Checkbox
-                            checked={graph.letterinList(vertice, item)}
-                            onChange={this.changeLetters(item, vertice)}
-                            value={vertice}
-                          />
-                        }
-                        label={vertice}
-                      />
-                    ))}
-                  </FormGroup>
-                </Paper>
-            ))}
-            <p style={{textAlign: "left", fontWeight: "bold"}}>{'Não utilize as letras x, y, z, k e b na lógica como símbolos proposicionais'}</p>
+            <p style={{textAlign: "left", fontWeight: "bold"}}>{'0, 1, e 2 são os símbolos proposicionais'}</p>
+            <p style={{textAlign: "left", fontWeight: "bold"}}>{'v, ^, ➡, !, K, B e [] são as operações possíveis'}</p>
             <TextField
               id="logic"
-              label="Lógica"
+              label="Anúncio"
               onChange={this.handleChange}
+              value={this.state.logic}
               margin="normal"
               variant="outlined"
               style={{marginRight: 50, marginLeft: 10}}
             />
-            {/* <p>{`Use v para 'ou',
-            ^ para 'e',
-            ➡ para 'implica',
-            ~ para 'negação',`}</p>
-            <p>{`[]a para 'para todo vizinho que contém o agente 'a' na aresta de ligação' e
-            <>a para 'existe um vizinho entre os que contém o agente 'a' na aresta de ligação'`}</p> */}
-            <Button variant="contained" color="default" style={{marginTop: 25, maxWidth: 380}} onClick={this.getResult}>
-              VERIFICAR RESULTADO
-            </Button>
+            <div>
+              <Button variant="contained" color="default" style={{marginTop: 25, maxWidth: 380}} onClick={this.getResult}>
+                VERIFICAR RESULTADO
+              </Button>
+              <Button variant="contained" color="default" style={{marginTop: 25, maxWidth: 380}} onClick={this.clear}>
+                RECOMEÇAR
+              </Button>
+            </div>
             <TextField
               error
               disabled
