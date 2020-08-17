@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/trabalho-resolver-logica/precache-manifest.6f9e9ca7b9cd028ed3d4e21ba377ca60.js"
+  "/ModalLogic/precache-manifest.4eb280345a77d681e1e5b9e2d4071956.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/trabalho-resolver-logica/index.html", {
+workbox.routing.registerNavigationRoute("/ModalLogic/index.html", {
   
-  blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
+  blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
